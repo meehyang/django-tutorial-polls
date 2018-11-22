@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>polls</title>
+</head>
+<body>
+    <h3>polls app의 index 페이지 입니다.</h3>
+    <p>view 모듈에 결과를 보여주는 html 태그를 직접 박지 않고 템플릿 디렉토리 내부에 분리해 별도로 표현할 수 있습니다.</p>
+    {% if latest_question_list %}
+        <ul>
+            {% for question in latest_question_list %}
+                <!--<li><a href="/polls/{{ question.id }}">{{ question.question_text }}</a></li>-->
+                <!--하드코딩 방식을 모듈의 속성값을 대입하는 형식으로 바꿈. polls.urls 모듈에서 name = detail 인 값 -->
+                <li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>no polls are available</p>
+    {% endif %}
+</body>
+</html>

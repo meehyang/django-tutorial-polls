@@ -1,44 +1,46 @@
 from django.shortcuts import render
 from django.template import loader
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.http import Http404
 from django.shortcuts import get_object_or_404, render
+from django.urls import reverse
 
-from .models import Question
+from .models import Question, Choice
+from django.views import generic
 
 # Create your views here.
-# 장고는 기존 쿼리스트링 방식에 비해 /newsarchive/<year>/<month> 같은 간결한 URL 패턴을 사용한다.
-# url에서 view 를 가져오기 위해 django는 'URLconfs' 라는 것을 사용한다. URLconfs는 URL과 view를 매핑해준다.
 
-# def index(request):
-#     latest_question_list = Question.objects.order_by('-pub_date')[:5]   # list를 가져오기 위한 query 실행
-#     template = loader.get_template('polls/index.html')
-#     context = {
-#         'latest_question_list': latest_question_list,
-#     }
-#     return HttpResponse(template.render(context, request))
+# 클래스형 뷰로 변경 추상화된 상위클래스 Generic이 view가 어떤 모델을 사용할지만 지정해주면 반복작업은 알아서 해준다
+class IndexView(generic.ListView):
+    template_name = 'polls/index.html'
+    context_object_name = 'latest_question_list'
 
-# 좀 더 짧은 방식으로 정의할 수 있다.
-def index(request):
-    latest_question_list = Question.objects.order_by('-pub_date')[:5]
-    context = {'latest_question_list': latest_question_list}
-    return render(request, 'polls/index.html', context)
+    def get_queryset(self):
+        """ 최근 질문 5개 리턴 """
+        return Question.objects.order_by('-pub_date')[:5]
 
-def detail(request, question_id):
-    # DB model 객체에서 반환하는 값이 없을 때의 예외처리
-    # try:
-    #     question = Question.objects.get(pk=question_id)
-    # except Question.DoesNotExist:
-    #     raise Http404('Question does not exist')
+class DetailView(generic.DetailView):
+    model = Question
+    template_name = 'polls/detail.html'
 
-    # 위 내용을 1줄로 줄일수도 있다.
-    question = get_object_or_404(Question, pk=question_id)
-    return render(request, 'polls/detail.html', {'question': question})
 
-def results(request, question_id):
-    response = "현재 질문 '%s'에 대한 결과를 보고 계십니다."
-    return HttpResponse(response % question_id)
+class ResultsView(generic.DetailView):
+    model = Question
+    template_name = 'polls/results.html'
+
 
 def vote(request, question_id):
-    return HttpResponse("질문 '%s'에 투표하셨습니다." % question_id)
+    question = get_object_or_404(Question, pk=question_id)
+    try:
+        selected_choice = question.choice_set.get(pk=request.POST['choice'])
+    except (KeyError, Choice.DoesNotExist):
+        # Redisplay the question voting form.
+        return render(request, 'polls/detail.html', {
+            'question': question,
+            'error_message': "You didn't select a choice.",
+        })
+    else:
+        selected_choice.votes += 1
+        selected_choice.save()
+        return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
