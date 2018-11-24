@@ -22,7 +22,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '1zab3*278)^c^eeq(k*1(-=ta*b0gqbtdvpl9-%@46(wv@k#!)'
+SECRET_KEY = '{personal SECRET_KEY_VALUE}'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG가True이고 ALLOWED_HOSTS가 비어 있으면, 호스트는 ['localhost', '127.0.0.1', '[::1]']에 대해서 유효함.
