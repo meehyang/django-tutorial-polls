@@ -1,6 +1,6 @@
 """poll URL Configuration
 
-프로젝트 poll의 장고 URL 선언들. 장고 프레ㅣㅁ워크 안에영향을 받는 컨텐츠들의 집합.
+프로젝트 poll의 장고 URL 선언들. 장고 프레임워크 안에영향을 받는 컨텐츠들의 집합.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/2.1/topics/http/urls/
